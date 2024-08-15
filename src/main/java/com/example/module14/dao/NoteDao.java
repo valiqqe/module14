@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import com.example.module14.entity.Note;
 
+import java.util.Optional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -31,7 +32,7 @@ public class NoteDao {
         return note;
     }
 
-    public void deleteNoteById(long id){
+    public Optional<Note> deleteNoteById(long id){
         EntityManager entityManager = getEntityManager();
         entityManager.getTransaction().begin();
         Note note = entityManager.find(Note.class, id);
@@ -42,9 +43,10 @@ public class NoteDao {
         entityManager.flush();
         entityManager.getTransaction().commit();
         entityManager.close();
+        return Optional.of(note);
     }
 
-    public void updateNote(Note note){
+    public Optional<Note> updateNote(Note note){
         EntityManager entityManager = getEntityManager();
         entityManager.getTransaction().begin();
         Note savedNote = entityManager.find(Note.class, note.getId());
@@ -55,16 +57,17 @@ public class NoteDao {
         entityManager.flush();
         entityManager.getTransaction().commit();
         entityManager.close();
+        return Optional.of(savedNote);
     }
 
-    public Note getNoteById(long id){
+    public Optional<Note> getNoteById(long id){
         EntityManager entityManager = getEntityManager();
         Note note = entityManager.find(Note.class, id);
         if (note == null){
             throw new NoSuchElementException("There is no such element with id=" + id);
         }
         entityManager.close();
-        return note;
+        return Optional.of(note);
     }
 
     private EntityManager getEntityManager(){
