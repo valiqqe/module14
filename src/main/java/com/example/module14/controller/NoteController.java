@@ -5,16 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.module14.entity.Note;
-import com.example.module14.service.NoteService;
-
+import com.example.module14.repository.NoteRepository;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/note")
 @RequiredArgsConstructor
-
 public class NoteController {
+
     private final NoteService noteService;
 
     @GetMapping("/list")

@@ -1,34 +1,42 @@
 package com.example.module14.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.module14.entity.Note;
-import com.example.module14.dao.NoteDao;
+import com.example.module14.repository.NoteRepository;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class NoteService {
-    private final NoteDao noteDao;
+
+    private final NoteRepository noteRepository;
 
     public List<Note> listAll(){
-        return noteDao.listAllNotes();
+        return noteRepository.findAll();
     }
 
     public Note add(Note note){
-        return noteDao.addNote(note);
+        return noteRepository.save(note);
     }
 
     public void deleteById(long id){
-        noteDao.deleteNoteById(id).orElseThrow(() -> new NoSuchElementException("There is no such element with id=" + id));
+        noteRepository.deleteById(id);
     }
 
+    @Transactional
     public void update(Note note){
-        noteDao.updateNote(note).orElseThrow(() -> new NoSuchElementException("There is no such element with id=" + note.getId()));
+        Note savedNote = noteRepository.findById(note.getId()).orElseThrow(NoSuchElementException::new);
+        savedNote.setTitle(note.getTitle());
+        savedNote.setContent(note.getContent());
+        noteRepository.save(savedNote);
+
     }
 
     public Note getById(long id){
-        return noteDao.getNoteById(id).orElseThrow(() -> new NoSuchElementException("There is no such element with id=" + id));
+        return noteRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 }
